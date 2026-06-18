@@ -8,18 +8,19 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { Textarea } from "@/components/ui/textarea";
-import { ChevronRight, ClipboardList, CheckCircle2, Car } from "lucide-react";
+import { ChevronRight, ClipboardList, CheckCircle2, Car, Plus, Trash2 } from "lucide-react";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 import {
   DUMMY_VEHICLES, STATUS_LABEL, STATUS_COLOR,
   GRADE_COLOR, formatPrice,
+  getOverallGradeStyle, USS_GRADES,
 } from "@/lib/dummy-data";
+import type { DamageNote } from "@/lib/dummy-data";
 
 type Props = { params: Promise<{ vehicleId: string }> };
 
-const GRADE_OPTIONS = ["S", "A", "B", "C", "D"] as const;
-type Grade = typeof GRADE_OPTIONS[number];
+const EXT_INT_GRADES = ["A", "B", "C", "D"] as const;
 
 const EXTERIOR_ITEMS = [
   "ボンネット", "フロントバンパー", "フロントフェンダー左", "フロントフェンダー右",
@@ -50,11 +51,11 @@ export default function AppraisalFormPage({ params }: Props) {
   if (!vehicle) notFound();
 
   const [saved, setSaved] = useState(false);
-  const [exteriorGrade, setExteriorGrade] = useState<Grade>(
-    (vehicle.exteriorGrade as Grade | undefined) ?? "A"
-  );
-  const [interiorGrade, setInteriorGrade] = useState<Grade>("A");
+  const [overallGrade, setOverallGrade] = useState(vehicle.overallGrade);
+  const [exteriorGrade, setExteriorGrade] = useState(vehicle.exteriorGrade || "A");
+  const [interiorGrade, setInteriorGrade] = useState(vehicle.interiorGrade || "A");
   const [hasRepairHistory, setHasRepairHistory] = useState(vehicle.hasRepairHistory);
+  const [damageNotes, setDamageNotes] = useState<DamageNote[]>(vehicle.damageNotes ?? []);
   const [exteriorConditions, setExteriorConditions] = useState<Record<string, string>>(
     Object.fromEntries(EXTERIOR_ITEMS.map((k) => [k, "GOOD"]))
   );
@@ -67,24 +68,23 @@ export default function AppraisalFormPage({ params }: Props) {
   const [accessories, setAccessories] = useState<Record<string, boolean>>(
     Object.fromEntries(ACCESSORIES.map((a) => [a, false]))
   );
-  const [marketMin, setMarketMin] = useState(
-    vehicle.marketPriceMin ? String(vehicle.marketPriceMin) : ""
-  );
-  const [marketMax, setMarketMax] = useState(
-    vehicle.marketPriceMax ? String(vehicle.marketPriceMax) : ""
-  );
-  const [purchasePrice, setPurchasePrice] = useState(
-    vehicle.purchasePrice ? String(vehicle.purchasePrice) : ""
-  );
+  const [marketMin, setMarketMin] = useState(vehicle.marketPriceMin ? String(vehicle.marketPriceMin) : "");
+  const [marketMax, setMarketMax] = useState(vehicle.marketPriceMax ? String(vehicle.marketPriceMax) : "");
+  const [purchasePrice, setPurchasePrice] = useState(vehicle.purchasePrice ? String(vehicle.purchasePrice) : "");
   const [notes, setNotes] = useState("");
+
+  const addDamageNote = () =>
+    setDamageNotes([...damageNotes, { location: "", code: "", description: "" }]);
+
+  const removeDamageNote = (index: number) =>
+    setDamageNotes(damageNotes.filter((_, i) => i !== index));
+
+  const updateDamageNote = (index: number, field: keyof DamageNote, value: string) =>
+    setDamageNotes(damageNotes.map((note, i) => i === index ? { ...note, [field]: value } : note));
 
   const ConditionSelector = ({
     items, state, setState,
-  }: {
-    items: string[];
-    state: Record<string, string>;
-    setState: (v: Record<string, string>) => void;
-  }) => (
+  }: { items: string[]; state: Record<string, string>; setState: (v: Record<string, string>) => void }) => (
     <div className="space-y-2">
       {items.map((item) => (
         <div key={item} className="flex items-center gap-2">
@@ -110,27 +110,6 @@ export default function AppraisalFormPage({ params }: Props) {
     </div>
   );
 
-  const GradeSelector = ({
-    value, onChange,
-  }: { value: Grade; onChange: (g: Grade) => void }) => (
-    <div className="flex gap-2">
-      {GRADE_OPTIONS.map((g) => (
-        <button
-          key={g}
-          onClick={() => onChange(g)}
-          className={cn(
-            "w-9 h-9 rounded border text-sm font-bold transition-all",
-            value === g
-              ? cn(GRADE_COLOR[g], "ring-2 ring-offset-1 ring-primary/30")
-              : "border-border text-muted-foreground hover:border-primary/40"
-          )}
-        >
-          {g}
-        </button>
-      ))}
-    </div>
-  );
-
   if (saved) {
     return (
       <div className="max-w-xl mx-auto mt-16 text-center space-y-4">
@@ -141,6 +120,25 @@ export default function AppraisalFormPage({ params }: Props) {
         <p className="text-sm text-muted-foreground">
           {vehicle.manufacturer} {vehicle.carName}（{vehicle.registrationNumber}）
         </p>
+        <div className="inline-flex items-center gap-3 px-5 py-3 rounded-xl bg-muted/50 border">
+          <span className={cn(
+            "text-3xl font-black px-4 py-1.5 rounded-lg border-2",
+            getOverallGradeStyle(overallGrade)
+          )}>
+            {overallGrade}
+          </span>
+          <div className="text-left">
+            <p className="text-xs text-muted-foreground mb-0.5">外装 / 内装</p>
+            <div className="flex gap-1.5">
+              <span className={cn("text-sm px-2 py-0.5 rounded border font-bold", GRADE_COLOR[exteriorGrade])}>
+                外 {exteriorGrade}
+              </span>
+              <span className={cn("text-sm px-2 py-0.5 rounded border font-bold", GRADE_COLOR[interiorGrade])}>
+                内 {interiorGrade}
+              </span>
+            </div>
+          </div>
+        </div>
         {purchasePrice && (
           <p className="text-xl font-bold text-green-600">
             買取価格：{formatPrice(Number(purchasePrice.replace(/,/g, "")))}
@@ -176,10 +174,7 @@ export default function AppraisalFormPage({ params }: Props) {
           <h1 className="text-xl font-bold">{vehicle.manufacturer} {vehicle.carName}</h1>
           <p className="text-sm text-muted-foreground">{vehicle.grade}　{vehicle.registrationNumber}</p>
         </div>
-        <span className={cn(
-          "text-xs font-medium px-2 py-0.5 rounded-full",
-          STATUS_COLOR[vehicle.status]
-        )}>
+        <span className={cn("text-xs font-medium px-2 py-0.5 rounded-full", STATUS_COLOR[vehicle.status])}>
           {STATUS_LABEL[vehicle.status]}
         </span>
       </div>
@@ -194,9 +189,9 @@ export default function AppraisalFormPage({ params }: Props) {
             <button
               onClick={() => setHasRepairHistory(false)}
               className={cn(
-                "flex-1 py-2 rounded border text-sm font-medium transition-all",
+                "flex-1 py-2.5 rounded border text-sm font-medium transition-all",
                 !hasRepairHistory
-                  ? "bg-green-50 border-green-500 text-green-700"
+                  ? "bg-green-50 border-green-500 text-green-700 font-bold"
                   : "border-border text-muted-foreground hover:border-primary/40"
               )}
             >
@@ -205,55 +200,165 @@ export default function AppraisalFormPage({ params }: Props) {
             <button
               onClick={() => setHasRepairHistory(true)}
               className={cn(
-                "flex-1 py-2 rounded border text-sm font-medium transition-all",
+                "flex-1 py-2.5 rounded border text-sm transition-all",
                 hasRepairHistory
-                  ? "bg-red-50 border-red-500 text-red-700"
+                  ? "bg-red-50 border-red-500 text-red-700 font-bold"
                   : "border-border text-muted-foreground hover:border-primary/40"
               )}
             >
-              あり
+              あり（評価R扱い）
             </button>
           </div>
         </CardContent>
       </Card>
 
-      {/* 外装評価 */}
+      {/* USS総合評価 */}
       <Card>
         <CardHeader className="pb-3">
-          <div className="flex items-center justify-between">
-            <CardTitle className="text-sm">外装評価</CardTitle>
-            <div className="flex items-center gap-2">
-              <span className="text-xs text-muted-foreground">総合等級</span>
-              <GradeSelector value={exteriorGrade} onChange={setExteriorGrade} />
+          <CardTitle className="text-sm">USS評価</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-5">
+          {/* 総合評価ボタン */}
+          <div>
+            <p className="text-xs font-medium mb-1">総合評価</p>
+            <p className="text-[11px] text-muted-foreground mb-2">
+              S=特上　6=優上　5=良上　4.5=良　4=良下　3.5=中上　3=中　2=中下　1=劣　R=修復歴
+            </p>
+            <div className="flex flex-wrap gap-2">
+              {USS_GRADES.map((g) => (
+                <button
+                  key={g}
+                  onClick={() => setOverallGrade(g)}
+                  className={cn(
+                    "min-w-[3rem] h-10 px-2.5 rounded border text-sm font-bold transition-all",
+                    overallGrade === g
+                      ? cn(getOverallGradeStyle(g), "ring-2 ring-offset-1 ring-current/40 scale-105")
+                      : "border-border text-muted-foreground hover:border-primary/40"
+                  )}
+                >
+                  {g}
+                </button>
+              ))}
             </div>
           </div>
-        </CardHeader>
-        <CardContent>
-          <ConditionSelector
-            items={EXTERIOR_ITEMS}
-            state={exteriorConditions}
-            setState={setExteriorConditions}
-          />
+
+          <Separator />
+
+          {/* 外装・内装評価 */}
+          <div className="grid grid-cols-2 gap-6">
+            <div>
+              <p className="text-xs font-medium mb-2">外装評価</p>
+              <div className="flex gap-2">
+                {EXT_INT_GRADES.map((g) => (
+                  <button
+                    key={g}
+                    onClick={() => setExteriorGrade(g)}
+                    className={cn(
+                      "w-9 h-9 rounded border text-sm font-bold transition-all",
+                      exteriorGrade === g
+                        ? cn(GRADE_COLOR[g], "ring-2 ring-offset-1 ring-current/30")
+                        : "border-border text-muted-foreground hover:border-primary/40"
+                    )}
+                  >
+                    {g}
+                  </button>
+                ))}
+              </div>
+            </div>
+            <div>
+              <p className="text-xs font-medium mb-2">内装評価</p>
+              <div className="flex gap-2">
+                {EXT_INT_GRADES.map((g) => (
+                  <button
+                    key={g}
+                    onClick={() => setInteriorGrade(g)}
+                    className={cn(
+                      "w-9 h-9 rounded border text-sm font-bold transition-all",
+                      interiorGrade === g
+                        ? cn(GRADE_COLOR[g], "ring-2 ring-offset-1 ring-current/30")
+                        : "border-border text-muted-foreground hover:border-primary/40"
+                    )}
+                  >
+                    {g}
+                  </button>
+                ))}
+              </div>
+            </div>
+          </div>
         </CardContent>
       </Card>
 
-      {/* 内装評価 */}
+      {/* キズ・ダメージ記号 */}
       <Card>
         <CardHeader className="pb-3">
           <div className="flex items-center justify-between">
-            <CardTitle className="text-sm">内装評価</CardTitle>
-            <div className="flex items-center gap-2">
-              <span className="text-xs text-muted-foreground">総合等級</span>
-              <GradeSelector value={interiorGrade} onChange={setInteriorGrade} />
-            </div>
+            <CardTitle className="text-sm">キズ・ダメージ記号</CardTitle>
+            <button
+              onClick={addDamageNote}
+              className={cn(buttonVariants({ variant: "outline" }), "h-7 text-xs px-3 gap-1")}
+            >
+              <Plus className="h-3 w-3" />
+              追加
+            </button>
           </div>
         </CardHeader>
+        <CardContent className="space-y-2">
+          <p className="text-[11px] text-muted-foreground">
+            A=キズ（A1小〜A3大）　U=ヘコミ　W=修理跡　B=サビ　X=ヒビ
+          </p>
+          {damageNotes.length === 0 && (
+            <p className="text-xs text-muted-foreground text-center py-4 border border-dashed rounded-lg">
+              キズ・ダメージ情報なし
+            </p>
+          )}
+          {damageNotes.map((note, i) => (
+            <div key={i} className="flex items-center gap-2">
+              <Input
+                className="h-7 text-xs flex-1"
+                placeholder="部位（例: フロントバンパー）"
+                value={note.location}
+                onChange={(e) => updateDamageNote(i, "location", e.target.value)}
+              />
+              <Input
+                className="h-7 text-xs w-16"
+                placeholder="コード"
+                value={note.code}
+                onChange={(e) => updateDamageNote(i, "code", e.target.value)}
+              />
+              <Input
+                className="h-7 text-xs flex-1"
+                placeholder="状態説明"
+                value={note.description}
+                onChange={(e) => updateDamageNote(i, "description", e.target.value)}
+              />
+              <button
+                onClick={() => removeDamageNote(i)}
+                className="text-red-400 hover:text-red-600 transition-colors shrink-0"
+              >
+                <Trash2 className="h-3.5 w-3.5" />
+              </button>
+            </div>
+          ))}
+        </CardContent>
+      </Card>
+
+      {/* 外装コンディション詳細 */}
+      <Card>
+        <CardHeader className="pb-3">
+          <CardTitle className="text-sm">外装コンディション詳細</CardTitle>
+        </CardHeader>
         <CardContent>
-          <ConditionSelector
-            items={INTERIOR_ITEMS}
-            state={interiorConditions}
-            setState={setInteriorConditions}
-          />
+          <ConditionSelector items={EXTERIOR_ITEMS} state={exteriorConditions} setState={setExteriorConditions} />
+        </CardContent>
+      </Card>
+
+      {/* 内装コンディション詳細 */}
+      <Card>
+        <CardHeader className="pb-3">
+          <CardTitle className="text-sm">内装コンディション詳細</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <ConditionSelector items={INTERIOR_ITEMS} state={interiorConditions} setState={setInteriorConditions} />
         </CardContent>
       </Card>
 
@@ -263,11 +368,7 @@ export default function AppraisalFormPage({ params }: Props) {
           <CardTitle className="text-sm">機関系チェック</CardTitle>
         </CardHeader>
         <CardContent>
-          <ConditionSelector
-            items={MECHANICAL_ITEMS}
-            state={mechanicalConditions}
-            setState={setMechanicalConditions}
-          />
+          <ConditionSelector items={MECHANICAL_ITEMS} state={mechanicalConditions} setState={setMechanicalConditions} />
         </CardContent>
       </Card>
 
@@ -307,7 +408,7 @@ export default function AppraisalFormPage({ params }: Props) {
               <Label className="text-xs">相場価格（下限）円</Label>
               <Input
                 className="mt-1 h-8 text-sm"
-                placeholder="例: 1400000"
+                placeholder="例: 5400000"
                 value={marketMin}
                 onChange={(e) => setMarketMin(e.target.value)}
               />
@@ -316,7 +417,7 @@ export default function AppraisalFormPage({ params }: Props) {
               <Label className="text-xs">相場価格（上限）円</Label>
               <Input
                 className="mt-1 h-8 text-sm"
-                placeholder="例: 1680000"
+                placeholder="例: 6200000"
                 value={marketMax}
                 onChange={(e) => setMarketMax(e.target.value)}
               />
@@ -338,7 +439,7 @@ export default function AppraisalFormPage({ params }: Props) {
             <Label className="text-xs font-medium">買取価格（提示額）円</Label>
             <Input
               className="mt-1 h-9 text-base font-bold"
-              placeholder="例: 1480000"
+              placeholder="例: 5800000"
               value={purchasePrice}
               onChange={(e) => setPurchasePrice(e.target.value)}
             />

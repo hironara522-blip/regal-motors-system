@@ -2,12 +2,15 @@ import { notFound } from "next/navigation";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { buttonVariants } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
-import { ChevronRight, Car, AlertTriangle, CheckCircle2, ClipboardList } from "lucide-react";
+import {
+  ChevronRight, Car, AlertTriangle, CheckCircle2, ClipboardList, Info,
+} from "lucide-react";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 import {
   DUMMY_VEHICLES, STATUS_LABEL, STATUS_COLOR,
   GRADE_COLOR, formatPrice, formatDate,
+  getOverallGradeStyle, USS_GRADE_LABEL, getDamageCodeStyle,
 } from "@/lib/dummy-data";
 
 type Props = { params: Promise<{ id: string }> };
@@ -18,18 +21,18 @@ export default async function VehicleDetailPage({ params }: Props) {
   if (!vehicle) notFound();
 
   const basicFields = [
-    { label: "メーカー・車名",       value: `${vehicle.manufacturer} ${vehicle.carName} ${vehicle.grade}` },
-    { label: "自動車登録番号",       value: vehicle.registrationNumber },
-    { label: "車台番号",             value: vehicle.chassisNumber },
-    { label: "型式",                 value: vehicle.modelCode },
-    { label: "初度登録年月",         value: vehicle.firstRegistrationDate },
-    { label: "車検満了日",           value: vehicle.inspectionExpiry },
-    { label: "排気量",               value: vehicle.displacement },
-    { label: "燃料の種類",           value: vehicle.fuel },
-    { label: "乗車定員",             value: vehicle.capacity },
-    { label: "車両重量",             value: vehicle.vehicleWeight },
-    { label: "走行距離",             value: `${vehicle.mileage}km` },
-    { label: "車体の色",             value: vehicle.color },
+    { label: "メーカー・車名",   value: `${vehicle.manufacturer} ${vehicle.carName} ${vehicle.grade}` },
+    { label: "自動車登録番号",   value: vehicle.registrationNumber },
+    { label: "車台番号",         value: vehicle.chassisNumber },
+    { label: "型式",             value: vehicle.modelCode },
+    { label: "初度登録年月",     value: vehicle.firstRegistrationDate },
+    { label: "車検満了日",       value: vehicle.inspectionExpiry },
+    { label: "排気量",           value: vehicle.displacement },
+    { label: "燃料の種類",       value: vehicle.fuel },
+    { label: "乗車定員",         value: vehicle.capacity },
+    { label: "車両重量",         value: vehicle.vehicleWeight },
+    { label: "走行距離",         value: `${vehicle.mileage}km` },
+    { label: "車体の色",         value: vehicle.color },
   ];
 
   return (
@@ -59,7 +62,7 @@ export default async function VehicleDetailPage({ params }: Props) {
           </div>
           <p className="text-sm text-muted-foreground">{vehicle.grade}</p>
           <p className="text-xs text-muted-foreground mt-1">
-            登録日: {formatDate(vehicle.appraisalDate)}
+            査定日: {formatDate(vehicle.appraisalDate)}
           </p>
         </div>
         <Link
@@ -73,36 +76,88 @@ export default async function VehicleDetailPage({ params }: Props) {
 
       {/* 修復歴アラート */}
       {vehicle.hasRepairHistory && (
-        <div className="flex items-center gap-2 p-3 rounded-lg bg-red-50 dark:bg-red-950/30 border border-red-200">
+        <div className="flex items-center gap-2 p-3 rounded-lg bg-red-50 border border-red-300">
           <AlertTriangle className="h-4 w-4 text-red-500 shrink-0" />
-          <p className="text-sm text-red-700 dark:text-red-300 font-medium">修復歴あり</p>
+          <p className="text-sm text-red-700 font-bold">修復歴あり</p>
+          <p className="text-xs text-red-600">（右フロントサイドメンバー修正）</p>
         </div>
       )}
 
-      {/* 外装等級 */}
-      {vehicle.exteriorGrade && (
-        <div className="flex items-center gap-4 p-4 rounded-lg border">
-          <div>
-            <p className="text-xs text-muted-foreground mb-1">外装評価等級</p>
-            <span className={cn(
-              "text-2xl font-bold px-3 py-1 rounded border",
-              GRADE_COLOR[vehicle.exteriorGrade]
-            )}>
-              {vehicle.exteriorGrade}
-            </span>
+      {/* USS評価パネル */}
+      <Card className={cn(vehicle.hasRepairHistory ? "border-red-200 bg-red-50/30" : "")}>
+        <CardContent className="pt-5 pb-5">
+          <div className="flex items-center gap-6">
+            {/* 総合評価 */}
+            <div className="text-center">
+              <p className="text-xs text-muted-foreground mb-1">USS総合</p>
+              <span className={cn(
+                "text-3xl font-black px-4 py-2 rounded-lg border-2",
+                getOverallGradeStyle(vehicle.overallGrade)
+              )}>
+                {vehicle.overallGrade}
+              </span>
+              <p className="text-xs text-muted-foreground mt-1">
+                {USS_GRADE_LABEL[vehicle.overallGrade] ?? ""}
+              </p>
+            </div>
+
+            <Separator orientation="vertical" className="h-16" />
+
+            {/* 外装・内装 */}
+            <div className="flex gap-4">
+              <div className="text-center">
+                <p className="text-xs text-muted-foreground mb-1">外装</p>
+                <span className={cn(
+                  "text-xl font-bold px-3 py-1.5 rounded border-2",
+                  GRADE_COLOR[vehicle.exteriorGrade]
+                )}>
+                  {vehicle.exteriorGrade}
+                </span>
+              </div>
+              <div className="text-center">
+                <p className="text-xs text-muted-foreground mb-1">内装</p>
+                <span className={cn(
+                  "text-xl font-bold px-3 py-1.5 rounded border-2",
+                  GRADE_COLOR[vehicle.interiorGrade]
+                )}>
+                  {vehicle.interiorGrade}
+                </span>
+              </div>
+            </div>
+
+            <Separator orientation="vertical" className="h-16 hidden sm:block" />
+
+            {/* 価格情報 */}
+            <div className="flex-1 hidden sm:block">
+              {vehicle.marketPriceMin && vehicle.marketPriceMax && (
+                <div className="mb-1">
+                  <p className="text-xs text-muted-foreground">相場</p>
+                  <p className="text-sm font-medium">
+                    {formatPrice(vehicle.marketPriceMin)} 〜 {formatPrice(vehicle.marketPriceMax)}
+                  </p>
+                </div>
+              )}
+              {vehicle.purchasePrice && (
+                <div>
+                  <p className="text-xs text-muted-foreground">買取価格</p>
+                  <p className="text-base font-bold text-green-600">{formatPrice(vehicle.purchasePrice)}</p>
+                </div>
+              )}
+            </div>
           </div>
-          <Separator orientation="vertical" className="h-12" />
-          <div className="grid grid-cols-2 gap-4 flex-1">
+
+          {/* モバイル用価格 */}
+          <div className="sm:hidden mt-4 pt-4 border-t grid grid-cols-2 gap-3 text-sm">
             {vehicle.marketPriceMin && (
               <div>
                 <p className="text-xs text-muted-foreground">相場下限</p>
-                <p className="text-sm font-medium">{formatPrice(vehicle.marketPriceMin)}</p>
+                <p className="font-medium">{formatPrice(vehicle.marketPriceMin)}</p>
               </div>
             )}
             {vehicle.marketPriceMax && (
               <div>
                 <p className="text-xs text-muted-foreground">相場上限</p>
-                <p className="text-sm font-medium">{formatPrice(vehicle.marketPriceMax)}</p>
+                <p className="font-medium">{formatPrice(vehicle.marketPriceMax)}</p>
               </div>
             )}
             {vehicle.purchasePrice && (
@@ -112,7 +167,69 @@ export default async function VehicleDetailPage({ params }: Props) {
               </div>
             )}
           </div>
-        </div>
+        </CardContent>
+      </Card>
+
+      {/* キズ・ダメージ情報 */}
+      {vehicle.damageNotes.length > 0 && (
+        <Card className="border-orange-200">
+          <CardHeader className="pb-3">
+            <CardTitle className="text-sm flex items-center gap-2 text-orange-700">
+              <AlertTriangle className="h-4 w-4 text-orange-500" />
+              キズ・ダメージ情報（{vehicle.damageNotes.length}件）
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-2">
+              {vehicle.damageNotes.map((note, i) => (
+                <div key={i} className="flex items-center gap-3 p-2 rounded-lg bg-orange-50/60">
+                  <span className={cn(
+                    "text-xs font-bold px-2 py-1 rounded border shrink-0",
+                    getDamageCodeStyle(note.code)
+                  )}>
+                    {note.code}
+                  </span>
+                  <div>
+                    <p className="text-xs font-medium">{note.location}</p>
+                    <p className="text-xs text-muted-foreground">{note.description}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+            <p className="text-[10px] text-muted-foreground mt-3">
+              A=キズ　U=ヘコミ　W=修理跡　B=サビ（数字1〜3：1小〜3大）
+            </p>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* 特記事項 */}
+      {vehicle.specialNotes.length > 0 && (
+        <Card>
+          <CardHeader className="pb-3">
+            <CardTitle className="text-sm flex items-center gap-2">
+              <Info className="h-4 w-4 text-blue-500" />
+              特記事項
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="flex flex-wrap gap-2">
+              {vehicle.specialNotes.map((note) => (
+                <span
+                  key={note}
+                  className={cn(
+                    "text-xs px-2.5 py-1 rounded-full border font-medium",
+                    note.includes("修復歴")
+                      ? "bg-red-100 text-red-700 border-red-300"
+                      : "bg-blue-50 text-blue-700 border-blue-200"
+                  )}
+                >
+                  {note}
+                </span>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
       )}
 
       {/* 車検証情報 */}

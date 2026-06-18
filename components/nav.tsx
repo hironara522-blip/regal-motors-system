@@ -19,8 +19,12 @@ export function Nav() {
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur">
       <div className="max-w-7xl mx-auto px-4 flex h-14 items-center gap-6">
         <Link href="/" className="flex items-center gap-2 font-bold text-lg shrink-0">
-          <Car className="h-5 w-5" />
-          <span>買取査定システム</span>
+          <div className="w-7 h-7 rounded-lg bg-blue-600 flex items-center justify-center">
+            <Car className="h-4 w-4 text-white" />
+          </div>
+          <span className="bg-gradient-to-r from-blue-700 to-blue-500 bg-clip-text text-transparent">
+            買取査定システム
+          </span>
         </Link>
         <nav className="flex items-center gap-1">
           {navItems.map(({ href, label, icon: Icon }) => (

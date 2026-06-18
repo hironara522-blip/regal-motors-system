@@ -1,6 +1,5 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Car, ClipboardList, ScanLine, TrendingUp, AlertTriangle } from "lucide-react";
+import { Car, ClipboardList, ScanLine, TrendingUp, AlertTriangle, Star } from "lucide-react";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { buttonVariants } from "@/components/ui/button";
@@ -8,9 +7,10 @@ import {
   DUMMY_VEHICLES,
   STATUS_LABEL,
   STATUS_COLOR,
-  GRADE_COLOR,
   formatPrice,
   formatDate,
+  getOverallGradeStyle,
+  GRADE_COLOR,
 } from "@/lib/dummy-data";
 
 export default function HomePage() {
@@ -18,15 +18,38 @@ export default function HomePage() {
   const completed = DUMMY_VEHICLES.filter((v) => v.status === "COMPLETED").length;
   const purchased = DUMMY_VEHICLES.filter((v) => v.status === "PURCHASED").length;
   const totalPurchaseAmount = DUMMY_VEHICLES.filter((v) => v.purchasePrice).reduce(
-    (sum, v) => sum + (v.purchasePrice ?? 0),
-    0
+    (sum, v) => sum + (v.purchasePrice ?? 0), 0
   );
 
   const stats = [
-    { label: "今月の査定件数", value: `${totalAppraisals}件`, icon: ClipboardList, color: "text-blue-600" },
-    { label: "査定完了", value: `${completed}件`, icon: TrendingUp, color: "text-green-600" },
-    { label: "買取済み", value: `${purchased}件`, icon: Car, color: "text-purple-600" },
-    { label: "今月の買取総額", value: formatPrice(totalPurchaseAmount), icon: TrendingUp, color: "text-orange-600" },
+    {
+      label: "今月の査定件数",
+      value: `${totalAppraisals}件`,
+      icon: ClipboardList,
+      cardColor: "bg-blue-50 border-blue-200",
+      iconColor: "text-blue-600",
+    },
+    {
+      label: "査定完了",
+      value: `${completed}件`,
+      icon: TrendingUp,
+      cardColor: "bg-green-50 border-green-200",
+      iconColor: "text-green-600",
+    },
+    {
+      label: "買取済み",
+      value: `${purchased}件`,
+      icon: Car,
+      cardColor: "bg-purple-50 border-purple-200",
+      iconColor: "text-purple-600",
+    },
+    {
+      label: "今月の買取総額",
+      value: formatPrice(totalPurchaseAmount),
+      icon: Star,
+      cardColor: "bg-orange-50 border-orange-200",
+      iconColor: "text-orange-600",
+    },
   ];
 
   return (
@@ -44,14 +67,14 @@ export default function HomePage() {
 
       {/* 統計カード */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        {stats.map(({ label, value, icon: Icon, color }) => (
-          <Card key={label}>
+        {stats.map(({ label, value, icon: Icon, cardColor, iconColor }) => (
+          <Card key={label} className={cn("border", cardColor)}>
             <CardContent className="pt-4 pb-4">
-              <div className="flex items-center justify-between mb-1">
+              <div className="flex items-center justify-between mb-2">
                 <span className="text-xs text-muted-foreground">{label}</span>
-                <Icon className={cn("h-4 w-4", color)} />
+                <Icon className={cn("h-4 w-4", iconColor)} />
               </div>
-              <p className="text-xl font-bold">{value}</p>
+              <p className={cn("text-xl font-bold", iconColor)}>{value}</p>
             </CardContent>
           </Card>
         ))}
@@ -60,10 +83,10 @@ export default function HomePage() {
       {/* クイックアクション */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <Link href="/vehicles/new">
-          <Card className="hover:shadow-md transition-shadow cursor-pointer border-dashed border-2">
+          <Card className="hover:shadow-md transition-shadow cursor-pointer border-dashed border-2 border-blue-300 bg-blue-50/50">
             <CardHeader className="pb-2">
               <CardTitle className="text-sm flex items-center gap-2">
-                <ScanLine className="h-4 w-4 text-primary" />
+                <ScanLine className="h-4 w-4 text-blue-600" />
                 車検証を読み取る
               </CardTitle>
             </CardHeader>
@@ -116,11 +139,20 @@ export default function HomePage() {
               <Link
                 key={v.id}
                 href={`/vehicles/${v.id}`}
-                className="flex items-center justify-between px-6 py-3 hover:bg-muted/50 transition-colors"
+                className={cn(
+                  "flex items-center justify-between px-6 py-3 hover:bg-muted/50 transition-colors",
+                  v.hasRepairHistory && "bg-red-50/50"
+                )}
               >
                 <div className="flex items-center gap-3 min-w-0">
-                  <div className="w-8 h-8 rounded-full bg-muted flex items-center justify-center shrink-0">
-                    <Car className="h-4 w-4 text-muted-foreground" />
+                  <div className={cn(
+                    "w-8 h-8 rounded-full flex items-center justify-center shrink-0",
+                    v.hasRepairHistory ? "bg-red-100" : "bg-muted"
+                  )}>
+                    {v.hasRepairHistory
+                      ? <AlertTriangle className="h-4 w-4 text-red-500" />
+                      : <Car className="h-4 w-4 text-muted-foreground" />
+                    }
                   </div>
                   <div className="min-w-0">
                     <p className="text-sm font-medium truncate">
@@ -132,18 +164,23 @@ export default function HomePage() {
                     </p>
                   </div>
                 </div>
-                <div className="flex items-center gap-3 shrink-0 ml-4">
-                  {v.exteriorGrade && (
-                    <span className={cn(
-                      "text-xs font-bold px-1.5 py-0.5 rounded border",
-                      GRADE_COLOR[v.exteriorGrade]
-                    )}>
-                      {v.exteriorGrade}
+                <div className="flex items-center gap-2 shrink-0 ml-4">
+                  {/* USS総合評価バッジ */}
+                  <span className={cn(
+                    "text-sm font-bold w-10 h-7 flex items-center justify-center rounded border",
+                    getOverallGradeStyle(v.overallGrade)
+                  )}>
+                    {v.overallGrade}
+                  </span>
+                  {/* 外装・内装 */}
+                  <div className="hidden sm:flex gap-1">
+                    <span className={cn("text-xs px-1 rounded border font-medium", GRADE_COLOR[v.exteriorGrade])}>
+                      外{v.exteriorGrade}
                     </span>
-                  )}
-                  {v.hasRepairHistory && (
-                    <AlertTriangle className="h-3.5 w-3.5 text-red-500" />
-                  )}
+                    <span className={cn("text-xs px-1 rounded border font-medium", GRADE_COLOR[v.interiorGrade])}>
+                      内{v.interiorGrade}
+                    </span>
+                  </div>
                   <span className={cn(
                     "text-xs font-medium px-2 py-0.5 rounded-full",
                     STATUS_COLOR[v.status]
