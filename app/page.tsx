@@ -26,8 +26,8 @@ export default function HomePage() {
       label: "今月の査定件数",
       value: `${totalAppraisals}件`,
       icon: ClipboardList,
-      cardColor: "bg-blue-50 border-blue-200",
-      iconColor: "text-blue-600",
+      cardColor: "bg-red-50 border-red-200",
+      iconColor: "text-red-700",
     },
     {
       label: "査定完了",
@@ -83,10 +83,10 @@ export default function HomePage() {
       {/* クイックアクション */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <Link href="/vehicles/new">
-          <Card className="hover:shadow-md transition-shadow cursor-pointer border-dashed border-2 border-blue-300 bg-blue-50/50">
+          <Card className="hover:shadow-md transition-shadow cursor-pointer border-dashed border-2 border-red-300 bg-red-50/50">
             <CardHeader className="pb-2">
               <CardTitle className="text-sm flex items-center gap-2">
-                <ScanLine className="h-4 w-4 text-blue-600" />
+                <ScanLine className="h-4 w-4 text-red-700" />
                 車検証を読み取る
               </CardTitle>
             </CardHeader>

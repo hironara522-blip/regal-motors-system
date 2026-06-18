@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Car, ClipboardList, LayoutDashboard, ScanLine } from "lucide-react";
@@ -16,16 +17,22 @@ export function Nav() {
   const pathname = usePathname();
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur">
-      <div className="max-w-7xl mx-auto px-4 flex h-14 items-center gap-6">
-        <Link href="/" className="flex items-center gap-2 font-bold text-lg shrink-0">
-          <div className="w-7 h-7 rounded-lg bg-blue-600 flex items-center justify-center">
-            <Car className="h-4 w-4 text-white" />
-          </div>
-          <span className="bg-gradient-to-r from-blue-700 to-blue-500 bg-clip-text text-transparent">
-            買取査定システム
-          </span>
+    <header className="sticky top-0 z-50 w-full bg-white border-b border-gray-200 shadow-sm">
+      <div className="max-w-7xl mx-auto px-4 flex h-16 items-center gap-8">
+        {/* ブランドロゴ */}
+        <Link href="/" className="shrink-0">
+          <Image
+            src="/logo.png"
+            alt="REGAL MOTORS"
+            width={220}
+            height={48}
+            style={{ height: "44px", width: "auto" }}
+            className="object-contain"
+            priority
+          />
         </Link>
+
+        {/* ナビゲーション */}
         <nav className="flex items-center gap-1">
           {navItems.map(({ href, label, icon: Icon }) => (
             <Link
@@ -34,8 +41,8 @@ export function Nav() {
               className={cn(
                 "flex items-center gap-1.5 px-3 py-1.5 rounded-md text-sm font-medium transition-colors",
                 pathname === href
-                  ? "bg-primary text-primary-foreground"
-                  : "text-muted-foreground hover:text-foreground hover:bg-accent"
+                  ? "bg-red-50 text-red-700 border border-red-200 font-semibold"
+                  : "text-gray-600 hover:text-gray-900 hover:bg-gray-100"
               )}
             >
               <Icon className="h-4 w-4" />
@@ -43,6 +50,11 @@ export function Nav() {
             </Link>
           ))}
         </nav>
+
+        {/* ブランド名（スペース確保用・非表示） */}
+        <div className="ml-auto hidden lg:flex items-center gap-2 text-xs text-gray-400 shrink-0">
+          <span>買取査定管理システム</span>
+        </div>
       </div>
     </header>
   );
