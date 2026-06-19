@@ -156,7 +156,7 @@ export default function NewVehiclePage() {
               onDragLeave={() => setIsDragOver(false)}
               onClick={() => fileInputRef.current?.click()}
               className={cn(
-                "border-2 border-dashed rounded-xl p-12 text-center cursor-pointer transition-all",
+                "border-2 border-dashed rounded-xl p-6 sm:p-12 text-center cursor-pointer transition-all",
                 isDragOver
                   ? "border-primary bg-primary/5 scale-[1.01]"
                   : "border-border hover:border-primary/50 hover:bg-muted/30"

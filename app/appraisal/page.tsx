@@ -25,12 +25,12 @@ export default function AppraisalPage() {
     <div className="space-y-8">
 
       {/* ページヘッダー */}
-      <div className="flex items-start justify-between">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">査定一覧</h1>
+          <h1 className="text-xl sm:text-2xl font-bold text-gray-900">査定一覧</h1>
           <p className="text-sm text-gray-500 mt-1">査定状況の管理・値付け検討</p>
         </div>
-        <Link href="/vehicles/new" className={cn(buttonVariants(), "gap-2 shadow-sm")}>
+        <Link href="/vehicles/new" className={cn(buttonVariants(), "gap-2 shadow-sm self-start")}>
           <ClipboardList className="h-4 w-4" />
           新規査定
         </Link>
@@ -164,7 +164,7 @@ export default function AppraisalPage() {
 
                     {/* 相場・買取価格 */}
                     {(v.marketPriceMin || v.purchasePrice) && (
-                      <div className="flex items-center gap-3 p-2.5 rounded-lg bg-gray-50 border border-gray-100 text-xs">
+                      <div className="flex flex-wrap items-center gap-2 p-2.5 rounded-lg bg-gray-50 border border-gray-100 text-xs">
                         <TrendingUp className="h-3.5 w-3.5 text-gray-400 shrink-0" />
                         {v.marketPriceMin && v.marketPriceMax && (
                           <span className="text-gray-500">
@@ -172,7 +172,7 @@ export default function AppraisalPage() {
                           </span>
                         )}
                         {v.purchasePrice && (
-                          <span className="font-bold text-emerald-600 ml-auto">
+                          <span className="font-bold text-emerald-600 sm:ml-auto">
                             買取 {formatPrice(v.purchasePrice)}
                           </span>
                         )}

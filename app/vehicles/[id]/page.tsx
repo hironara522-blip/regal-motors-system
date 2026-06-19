@@ -67,10 +67,10 @@ export default async function VehicleDetailPage({ params }: Props) {
       )}
 
       {/* ページヘッダー */}
-      <div className="flex items-start justify-between gap-4">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between sm:gap-4">
         <div>
           <div className="flex items-center gap-2.5 mb-1">
-            <h1 className="text-xl font-bold text-gray-900">
+            <h1 className="text-lg sm:text-xl font-bold text-gray-900">
               {vehicle.manufacturer} {vehicle.carName}
             </h1>
             <span className={cn("text-xs font-medium px-2 py-0.5 rounded-full", STATUS_COLOR[vehicle.status])}>
@@ -80,7 +80,7 @@ export default async function VehicleDetailPage({ params }: Props) {
           <p className="text-sm text-gray-500">{vehicle.grade}</p>
           <p className="text-xs text-gray-400 mt-1">査定日: {formatDate(vehicle.appraisalDate)}</p>
         </div>
-        <Link href={`/appraisal/${vehicle.id}`} className={cn(buttonVariants(), "gap-2 shrink-0 shadow-sm")}>
+        <Link href={`/appraisal/${vehicle.id}`} className={cn(buttonVariants(), "gap-2 self-start shrink-0 shadow-sm")}>
           <ClipboardList className="h-4 w-4" />
           査定フォームへ
         </Link>
@@ -103,7 +103,7 @@ export default async function VehicleDetailPage({ params }: Props) {
       <Card className={cn(vehicle.hasRepairHistory ? "border-red-200" : "border-blue-100")}>
         <CardContent className="py-6">
           <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-4">USS 査定評価</p>
-          <div className="flex items-center gap-6 flex-wrap">
+          <div className="flex flex-wrap items-start gap-4 sm:gap-6">
 
             {/* 総合 */}
             <div className="text-center">
@@ -140,7 +140,7 @@ export default async function VehicleDetailPage({ params }: Props) {
             <Separator orientation="vertical" className="h-16 hidden sm:block" />
 
             {/* 価格 */}
-            <div className="flex-1 min-w-[180px]">
+            <div className="w-full sm:flex-1 sm:min-w-0">
               {vehicle.marketPriceMin && vehicle.marketPriceMax && (
                 <div className="mb-3">
                   <p className="text-xs text-gray-400 mb-0.5">市場相場</p>
@@ -246,7 +246,7 @@ export default async function VehicleDetailPage({ params }: Props) {
       </Card>
 
       {/* フッターアクション */}
-      <div className="flex gap-3 pb-4">
+      <div className="flex flex-col sm:flex-row gap-3 pb-4">
         <Link href="/vehicles" className={cn(buttonVariants({ variant: "outline" }), "gap-2")}>
           <Car className="h-4 w-4" />
           車両一覧に戻る

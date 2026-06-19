@@ -18,12 +18,12 @@ export default function VehiclesPage() {
     <div className="space-y-6">
 
       {/* ページヘッダー */}
-      <div className="flex items-start justify-between">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">車両一覧</h1>
+          <h1 className="text-xl sm:text-2xl font-bold text-gray-900">車両一覧</h1>
           <p className="text-sm text-gray-500 mt-1">登録済み {DUMMY_VEHICLES.length}台</p>
         </div>
-        <Link href="/vehicles/new" className={cn(buttonVariants(), "gap-2 shadow-sm")}>
+        <Link href="/vehicles/new" className={cn(buttonVariants(), "gap-2 shadow-sm self-start")}>
           <Plus className="h-4 w-4" />
           新規登録
         </Link>
@@ -31,7 +31,7 @@ export default function VehiclesPage() {
 
       {/* テーブル */}
       <Card>
-        <CardContent className="p-0">
+        <CardContent className="p-0 overflow-x-auto">
           <Table>
             <TableHeader>
               <TableRow className="bg-gray-50/80 hover:bg-gray-50/80 border-b border-gray-100">
@@ -56,20 +56,22 @@ export default function VehiclesPage() {
                   )}
                 >
                   {/* 車両名 */}
-                  <TableCell className="py-3">
-                    <div className="flex items-center gap-3">
-                      <VehicleImage
-                        src={v.imageUrl}
-                        alt={`${v.manufacturer} ${v.carName}`}
-                        hasRepairHistory={v.hasRepairHistory}
-                        variant="thumbnail"
-                      />
-                      <div>
-                        <p className="text-sm font-semibold text-gray-900 leading-tight">
+                  <TableCell className="py-3 min-w-[160px]">
+                    <div className="flex items-center gap-2 sm:gap-3">
+                      <div className="shrink-0 w-14 sm:w-20">
+                        <VehicleImage
+                          src={v.imageUrl}
+                          alt={`${v.manufacturer} ${v.carName}`}
+                          hasRepairHistory={v.hasRepairHistory}
+                          variant="thumbnail"
+                        />
+                      </div>
+                      <div className="min-w-0">
+                        <p className="text-sm font-semibold text-gray-900 leading-tight whitespace-nowrap">
                           {v.manufacturer} {v.carName}
                         </p>
-                        <p className="text-xs text-gray-400 mt-0.5">{v.grade}</p>
-                        <p className="text-xs text-gray-300 mt-0.5">{v.color}</p>
+                        <p className="text-xs text-gray-400 mt-0.5 whitespace-nowrap">{v.grade}</p>
+                        <p className="text-xs text-gray-300 mt-0.5 hidden sm:block">{v.color}</p>
                       </div>
                     </div>
                   </TableCell>

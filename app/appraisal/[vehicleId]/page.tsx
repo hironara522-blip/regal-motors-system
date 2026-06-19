@@ -88,14 +88,14 @@ export default function AppraisalFormPage({ params }: Props) {
     <div className="space-y-2">
       {items.map((item) => (
         <div key={item} className="flex items-center gap-2">
-          <span className="text-xs w-32 shrink-0">{item}</span>
-          <div className="flex gap-1">
+          <span className="text-xs w-24 sm:w-32 shrink-0">{item}</span>
+          <div className="flex flex-wrap gap-1">
             {CONDITION_OPTIONS.map((opt) => (
               <button
                 key={opt.value}
                 onClick={() => setState({ ...state, [item]: opt.value })}
                 className={cn(
-                  "text-xs px-2 py-0.5 rounded border transition-all",
+                  "text-xs px-1.5 sm:px-2 py-0.5 rounded border transition-all",
                   state[item] === opt.value
                     ? opt.color + " font-bold"
                     : "border-border text-muted-foreground hover:border-primary/40"
@@ -319,31 +319,35 @@ export default function AppraisalFormPage({ params }: Props) {
             </p>
           )}
           {damageNotes.map((note, i) => (
-            <div key={i} className="flex items-center gap-2">
-              <Input
-                className="h-7 text-xs flex-1"
-                placeholder="部位（例: フロントバンパー）"
-                value={note.location}
-                onChange={(e) => updateDamageNote(i, "location", e.target.value)}
-              />
-              <Input
-                className="h-7 text-xs w-16"
-                placeholder="コード"
-                value={note.code}
-                onChange={(e) => updateDamageNote(i, "code", e.target.value)}
-              />
-              <Input
-                className="h-7 text-xs flex-1"
-                placeholder="状態説明"
-                value={note.description}
-                onChange={(e) => updateDamageNote(i, "description", e.target.value)}
-              />
-              <button
-                onClick={() => removeDamageNote(i)}
-                className="text-red-400 hover:text-red-600 transition-colors shrink-0"
-              >
-                <Trash2 className="h-3.5 w-3.5" />
-              </button>
+            <div key={i} className="flex flex-col gap-1.5 sm:flex-row sm:items-center sm:gap-2 p-2 rounded-lg bg-gray-50/60 sm:p-0 sm:bg-transparent">
+              <div className="flex gap-1.5 sm:contents">
+                <Input
+                  className="h-7 text-xs flex-1"
+                  placeholder="部位（例: フロントバンパー）"
+                  value={note.location}
+                  onChange={(e) => updateDamageNote(i, "location", e.target.value)}
+                />
+                <Input
+                  className="h-7 text-xs w-16 shrink-0"
+                  placeholder="コード"
+                  value={note.code}
+                  onChange={(e) => updateDamageNote(i, "code", e.target.value)}
+                />
+              </div>
+              <div className="flex gap-1.5 sm:contents">
+                <Input
+                  className="h-7 text-xs flex-1"
+                  placeholder="状態説明"
+                  value={note.description}
+                  onChange={(e) => updateDamageNote(i, "description", e.target.value)}
+                />
+                <button
+                  onClick={() => removeDamageNote(i)}
+                  className="text-red-400 hover:text-red-600 transition-colors shrink-0"
+                >
+                  <Trash2 className="h-3.5 w-3.5" />
+                </button>
+              </div>
             </div>
           ))}
         </CardContent>
@@ -478,13 +482,13 @@ export default function AppraisalFormPage({ params }: Props) {
       </Card>
 
       {/* 保存ボタン */}
-      <div className="flex justify-end gap-3 pb-8">
-        <Link href={`/vehicles/${vehicle.id}`} className={cn(buttonVariants({ variant: "outline" }))}>
+      <div className="flex flex-col-reverse sm:flex-row sm:justify-end gap-3 pb-8">
+        <Link href={`/vehicles/${vehicle.id}`} className={cn(buttonVariants({ variant: "outline" }), "w-full sm:w-auto justify-center")}>
           キャンセル
         </Link>
         <button
           onClick={() => setSaved(true)}
-          className={cn(buttonVariants(), "gap-2")}
+          className={cn(buttonVariants(), "gap-2 w-full sm:w-auto justify-center")}
         >
           <CheckCircle2 className="h-4 w-4" />
           査定情報を保存する

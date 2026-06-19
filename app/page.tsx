@@ -32,12 +32,12 @@ export default function HomePage() {
     <div className="space-y-8">
 
       {/* ページヘッダー */}
-      <div className="flex items-start justify-between">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">ダッシュボード</h1>
+          <h1 className="text-xl sm:text-2xl font-bold text-gray-900">ダッシュボード</h1>
           <p className="text-sm text-gray-500 mt-1">買取査定の管理・比較検討</p>
         </div>
-        <Link href="/vehicles/new" className={cn(buttonVariants(), "gap-2 shadow-sm")}>
+        <Link href="/vehicles/new" className={cn(buttonVariants(), "gap-2 shadow-sm self-start")}>
           <ScanLine className="h-4 w-4" />
           新規査定を開始
         </Link>
@@ -47,10 +47,10 @@ export default function HomePage() {
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         {stats.map(({ label, value, icon: Icon, accent, iconCls }) => (
           <Card key={label} className={cn("border-l-4", accent)}>
-            <CardContent className="py-5">
+            <CardContent className="py-4 sm:py-5">
               <div className="flex items-start justify-between">
                 <div>
-                  <p className="text-2xl font-bold text-gray-900 tabular-nums">{value}</p>
+                  <p className="text-xl sm:text-2xl font-bold text-gray-900 tabular-nums">{value}</p>
                   <p className="text-xs text-gray-500 mt-1.5 font-medium">{label}</p>
                 </div>
                 <Icon className={cn("h-5 w-5 mt-0.5 opacity-60", iconCls)} />
@@ -105,7 +105,7 @@ export default function HomePage() {
 
       {/* 直近の査定 */}
       <Card>
-        <div className="px-6 py-4 border-b border-gray-100 flex items-center justify-between">
+        <div className="px-3 py-4 sm:px-6 border-b border-gray-100 flex items-center justify-between">
           <h2 className="text-sm font-semibold text-gray-900 flex items-center gap-2">
             <TrendingUp className="h-4 w-4 text-gray-400" />
             直近の査定
@@ -121,7 +121,7 @@ export default function HomePage() {
                 key={v.id}
                 href={`/vehicles/${v.id}`}
                 className={cn(
-                  "flex items-center justify-between px-6 py-4 hover:bg-gray-50/70 transition-colors",
+                  "flex items-center justify-between px-3 py-3 sm:px-6 sm:py-4 hover:bg-gray-50/70 transition-colors",
                   v.hasRepairHistory && "bg-red-50/30"
                 )}
               >
@@ -148,9 +148,9 @@ export default function HomePage() {
                 </div>
 
                 {/* 右: 評価バッジ群 */}
-                <div className="flex items-center gap-2.5 shrink-0 ml-4">
+                <div className="flex items-center gap-1.5 sm:gap-2.5 shrink-0 ml-3 sm:ml-4">
                   <span className={cn(
-                    "text-sm font-bold w-11 h-7 flex items-center justify-center rounded border",
+                    "text-sm font-bold w-10 sm:w-11 h-7 flex items-center justify-center rounded border",
                     getOverallGradeStyle(v.overallGrade)
                   )}>
                     {v.overallGrade}
@@ -159,10 +159,10 @@ export default function HomePage() {
                     <span className={cn("text-xs px-1.5 rounded border font-semibold", GRADE_COLOR[v.exteriorGrade])}>外{v.exteriorGrade}</span>
                     <span className={cn("text-xs px-1.5 rounded border font-semibold", GRADE_COLOR[v.interiorGrade])}>内{v.interiorGrade}</span>
                   </div>
-                  <span className={cn("text-xs font-medium px-2 py-0.5 rounded-full", STATUS_COLOR[v.status])}>
+                  <span className={cn("text-xs font-medium px-1.5 sm:px-2 py-0.5 rounded-full", STATUS_COLOR[v.status])}>
                     {STATUS_LABEL[v.status]}
                   </span>
-                  <span className="text-xs text-gray-400 w-12 text-right tabular-nums">
+                  <span className="hidden sm:block text-xs text-gray-400 w-12 text-right tabular-nums">
                     {formatDate(v.appraisalDate)}
                   </span>
                 </div>
