@@ -4,13 +4,14 @@ import {
   Table, TableBody, TableCell, TableHead,
   TableHeader, TableRow,
 } from "@/components/ui/table";
-import { Car, Plus, AlertTriangle } from "lucide-react";
+import { Plus } from "lucide-react";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 import {
   DUMMY_VEHICLES, STATUS_LABEL, STATUS_COLOR,
   GRADE_COLOR, formatDate, getOverallGradeStyle, USS_GRADE_LABEL,
 } from "@/lib/dummy-data";
+import { VehicleImage } from "@/components/vehicle-image";
 
 export default function VehiclesPage() {
   return (
@@ -57,37 +58,12 @@ export default function VehiclesPage() {
                   {/* 車両名 */}
                   <TableCell className="py-3">
                     <div className="flex items-center gap-3">
-                      {/* サムネイル */}
-                      <div className="w-20 h-14 rounded-lg overflow-hidden bg-gray-100 shrink-0 relative">
-                        {v.imageUrl ? (
-                          <img
-                            src={v.imageUrl}
-                            alt={`${v.manufacturer} ${v.carName}`}
-                            className="w-full h-full object-cover"
-                            onError={(e) => {
-                              e.currentTarget.style.display = "none";
-                              e.currentTarget.parentElement!.setAttribute("data-fallback", "true");
-                            }}
-                          />
-                        ) : null}
-                        {/* fallback icon (shown when no image or load error) */}
-                        {!v.imageUrl && (
-                          <div className={cn(
-                            "absolute inset-0 flex items-center justify-center",
-                            v.hasRepairHistory ? "bg-red-50" : "bg-gray-100"
-                          )}>
-                            {v.hasRepairHistory
-                              ? <AlertTriangle className="h-5 w-5 text-red-400" />
-                              : <Car className="h-5 w-5 text-gray-300" />}
-                          </div>
-                        )}
-                        {/* 修復歴バッジ */}
-                        {v.hasRepairHistory && (
-                          <div className="absolute bottom-0 left-0 right-0 bg-red-600/80 py-0.5 text-center">
-                            <span className="text-[9px] font-bold text-white tracking-wider">修復歴</span>
-                          </div>
-                        )}
-                      </div>
+                      <VehicleImage
+                        src={v.imageUrl}
+                        alt={`${v.manufacturer} ${v.carName}`}
+                        hasRepairHistory={v.hasRepairHistory}
+                        variant="thumbnail"
+                      />
                       <div>
                         <p className="text-sm font-semibold text-gray-900 leading-tight">
                           {v.manufacturer} {v.carName}

@@ -8,6 +8,7 @@ import {
   GRADE_COLOR, formatPrice, formatDate,
   getOverallGradeStyle, USS_GRADE_LABEL, getDamageCodeStyle,
 } from "@/lib/dummy-data";
+import { VehicleImage } from "@/components/vehicle-image";
 
 export default function AppraisalPage() {
   const inProgress = DUMMY_VEHICLES.filter((v) => v.status === "IN_PROGRESS");
@@ -61,18 +62,13 @@ export default function AppraisalPage() {
                 >
                   {/* カードサムネイル */}
                   {v.imageUrl && (
-                    <div className="relative h-28 overflow-hidden bg-gray-100">
-                      <img
+                    <div data-vehicle-card className="relative">
+                      <VehicleImage
                         src={v.imageUrl}
                         alt={`${v.manufacturer} ${v.carName}`}
-                        className="w-full h-full object-cover"
-                        onError={(e) => {
-                          const parent = e.currentTarget.parentElement;
-                          if (parent) parent.style.display = "none";
-                        }}
+                        variant="card"
                       />
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
-                      <div className="absolute bottom-0 left-0 right-0 flex items-end justify-between p-2.5">
+                      <div className="absolute bottom-0 left-0 right-0 flex items-end justify-between p-2.5 pointer-events-none">
                         <p className="text-white text-xs font-semibold drop-shadow-sm">
                           {v.manufacturer} {v.carName}
                         </p>

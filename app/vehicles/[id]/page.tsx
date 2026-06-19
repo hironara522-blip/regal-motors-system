@@ -5,6 +5,7 @@ import { Separator } from "@/components/ui/separator";
 import {
   ChevronRight, Car, AlertTriangle, CheckCircle2, ClipboardList, Info, BadgeCheck,
 } from "lucide-react";
+import { VehicleImage } from "@/components/vehicle-image";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 import {
@@ -50,25 +51,17 @@ export default async function VehicleDetailPage({ params }: Props) {
 
       {/* ヒーロー画像 */}
       {vehicle.imageUrl && (
-        <div className="rounded-xl overflow-hidden bg-gray-100 shadow-sm ring-1 ring-black/[0.07]">
-          <div className="relative w-full" style={{ aspectRatio: "16/7" }}>
-            <img
-              src={vehicle.imageUrl}
-              alt={`${vehicle.manufacturer} ${vehicle.carName}`}
-              className="w-full h-full object-cover"
-              onError={(e) => {
-                const parent = e.currentTarget.parentElement?.parentElement;
-                if (parent) parent.style.display = "none";
-              }}
-            />
-            {/* カラー・グレードオーバーレイ */}
-            <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
-            <div className="absolute bottom-0 left-0 p-4">
-              <p className="text-white font-bold text-lg drop-shadow-sm">
-                {vehicle.manufacturer} {vehicle.carName}
-              </p>
-              <p className="text-white/80 text-sm">{vehicle.color}</p>
-            </div>
+        <div data-vehicle-hero className="relative rounded-xl overflow-hidden shadow-sm ring-1 ring-black/[0.07]">
+          <VehicleImage
+            src={vehicle.imageUrl}
+            alt={`${vehicle.manufacturer} ${vehicle.carName}`}
+            variant="hero"
+          />
+          <div className="absolute bottom-0 left-0 p-4 pointer-events-none">
+            <p className="text-white font-bold text-lg drop-shadow-sm">
+              {vehicle.manufacturer} {vehicle.carName}
+            </p>
+            <p className="text-white/80 text-sm">{vehicle.color}</p>
           </div>
         </div>
       )}
