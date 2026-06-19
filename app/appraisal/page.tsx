@@ -49,33 +49,71 @@ export default function AppraisalPage() {
                 <Card
                   key={v.id}
                   className={cn(
-                    "hover:shadow-md transition-shadow",
+                    "hover:shadow-md transition-shadow overflow-hidden",
                     v.hasRepairHistory
-                      ? "border-red-200 bg-red-50/20"
+                      ? "border-red-200"
                       : ["5", "S", "6"].includes(v.overallGrade)
-                      ? "border-emerald-200/60"
+                      ? "border-amber-200/60"
                       : ["4.5", "4"].includes(v.overallGrade)
-                      ? "border-blue-200/60"
+                      ? "border-zinc-200/60"
                       : ""
                   )}
                 >
+                  {/* カードサムネイル */}
+                  {v.imageUrl && (
+                    <div className="relative h-28 overflow-hidden bg-gray-100">
+                      <img
+                        src={v.imageUrl}
+                        alt={`${v.manufacturer} ${v.carName}`}
+                        className="w-full h-full object-cover"
+                        onError={(e) => {
+                          const parent = e.currentTarget.parentElement;
+                          if (parent) parent.style.display = "none";
+                        }}
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
+                      <div className="absolute bottom-0 left-0 right-0 flex items-end justify-between p-2.5">
+                        <p className="text-white text-xs font-semibold drop-shadow-sm">
+                          {v.manufacturer} {v.carName}
+                        </p>
+                        <span className={cn(
+                          "text-xs font-medium px-2 py-0.5 rounded-full",
+                          STATUS_COLOR[v.status]
+                        )}>
+                          {STATUS_LABEL[v.status]}
+                        </span>
+                      </div>
+                      {v.hasRepairHistory && (
+                        <div className="absolute top-2 left-2 flex items-center gap-1 bg-red-600/90 text-white text-[10px] font-bold px-1.5 py-0.5 rounded">
+                          <AlertTriangle className="h-2.5 w-2.5" />
+                          修復歴
+                        </div>
+                      )}
+                    </div>
+                  )}
                   <CardHeader className="pb-0">
                     <div className="flex items-start justify-between gap-2">
                       <div>
                         <CardTitle className="text-sm font-semibold text-gray-900 flex items-center gap-1.5">
-                          {v.manufacturer} {v.carName}
-                          {v.hasRepairHistory && (
+                          {!v.imageUrl && v.manufacturer} {!v.imageUrl && v.carName}
+                          {v.imageUrl && <span className="text-gray-600 font-normal">{v.grade}</span>}
+                          {!v.imageUrl && v.hasRepairHistory && (
                             <AlertTriangle className="h-3.5 w-3.5 text-red-500 shrink-0" />
                           )}
                         </CardTitle>
-                        <p className="text-xs text-gray-400 mt-0.5">{v.grade}</p>
+                        {!v.imageUrl && <p className="text-xs text-gray-400 mt-0.5">{v.grade}</p>}
+                        {v.imageUrl && (
+                          <p className="text-xs text-gray-400 mt-0.5">{v.color}</p>
+                        )}
                       </div>
-                      <span className={cn(
-                        "text-xs font-medium px-2 py-0.5 rounded-full shrink-0",
-                        STATUS_COLOR[v.status]
-                      )}>
-                        {STATUS_LABEL[v.status]}
-                      </span>
+                      {!v.imageUrl && (
+                        <span className={cn(
+                          "text-xs font-medium px-2 py-0.5 rounded-full shrink-0",
+                          STATUS_COLOR[v.status]
+                        )}>
+                          {STATUS_LABEL[v.status]}
+                        </span>
+                      )}
                     </div>
                   </CardHeader>
 

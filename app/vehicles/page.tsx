@@ -55,21 +55,45 @@ export default function VehiclesPage() {
                   )}
                 >
                   {/* 車両名 */}
-                  <TableCell className="py-4">
+                  <TableCell className="py-3">
                     <div className="flex items-center gap-3">
-                      <div className={cn(
-                        "w-8 h-8 rounded-lg flex items-center justify-center shrink-0",
-                        v.hasRepairHistory ? "bg-red-100" : "bg-gray-100"
-                      )}>
-                        {v.hasRepairHistory
-                          ? <AlertTriangle className="h-4 w-4 text-red-500" />
-                          : <Car className="h-4 w-4 text-gray-400" />}
+                      {/* サムネイル */}
+                      <div className="w-20 h-14 rounded-lg overflow-hidden bg-gray-100 shrink-0 relative">
+                        {v.imageUrl ? (
+                          <img
+                            src={v.imageUrl}
+                            alt={`${v.manufacturer} ${v.carName}`}
+                            className="w-full h-full object-cover"
+                            onError={(e) => {
+                              e.currentTarget.style.display = "none";
+                              e.currentTarget.parentElement!.setAttribute("data-fallback", "true");
+                            }}
+                          />
+                        ) : null}
+                        {/* fallback icon (shown when no image or load error) */}
+                        {!v.imageUrl && (
+                          <div className={cn(
+                            "absolute inset-0 flex items-center justify-center",
+                            v.hasRepairHistory ? "bg-red-50" : "bg-gray-100"
+                          )}>
+                            {v.hasRepairHistory
+                              ? <AlertTriangle className="h-5 w-5 text-red-400" />
+                              : <Car className="h-5 w-5 text-gray-300" />}
+                          </div>
+                        )}
+                        {/* 修復歴バッジ */}
+                        {v.hasRepairHistory && (
+                          <div className="absolute bottom-0 left-0 right-0 bg-red-600/80 py-0.5 text-center">
+                            <span className="text-[9px] font-bold text-white tracking-wider">修復歴</span>
+                          </div>
+                        )}
                       </div>
                       <div>
                         <p className="text-sm font-semibold text-gray-900 leading-tight">
                           {v.manufacturer} {v.carName}
                         </p>
                         <p className="text-xs text-gray-400 mt-0.5">{v.grade}</p>
+                        <p className="text-xs text-gray-300 mt-0.5">{v.color}</p>
                       </div>
                     </div>
                   </TableCell>

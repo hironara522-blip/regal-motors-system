@@ -22,10 +22,10 @@ export default function HomePage() {
     .reduce((sum, v) => sum + (v.purchasePrice ?? 0), 0);
 
   const stats = [
-    { label: "今月の査定件数", value: `${totalAppraisals}件`, icon: ClipboardList, accent: "border-l-red-600",    iconCls: "text-red-500" },
-    { label: "査定完了",       value: `${completed}件`,       icon: CheckCircle2,  accent: "border-l-emerald-500", iconCls: "text-emerald-500" },
-    { label: "買取済み",       value: `${purchased}件`,       icon: Car,           accent: "border-l-violet-500",  iconCls: "text-violet-500" },
-    { label: "今月の買取総額", value: formatPrice(totalPurchaseAmount), icon: TrendingUp, accent: "border-l-amber-500", iconCls: "text-amber-500" },
+    { label: "今月の査定件数", value: `${totalAppraisals}件`, icon: ClipboardList, accent: "border-l-zinc-800",   iconCls: "text-zinc-500" },
+    { label: "査定完了",       value: `${completed}件`,       icon: CheckCircle2,  accent: "border-l-amber-500",  iconCls: "text-amber-500" },
+    { label: "買取済み",       value: `${purchased}件`,       icon: Car,           accent: "border-l-zinc-500",   iconCls: "text-zinc-400" },
+    { label: "今月の買取総額", value: formatPrice(totalPurchaseAmount), icon: TrendingUp, accent: "border-l-red-700", iconCls: "text-red-600" },
   ];
 
   return (

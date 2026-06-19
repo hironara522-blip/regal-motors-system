@@ -22,6 +22,7 @@ export interface DummyVehicle {
   vehicleWeight: string;
   mileage: string;
   color: string;
+  imageUrl?: string;
   status: VehicleStatus;
   appraisalDate: string;
   overallGrade: string;
@@ -51,7 +52,8 @@ export const DUMMY_VEHICLES: DummyVehicle[] = [
     capacity: "5名",
     vehicleWeight: "1,900kg",
     mileage: "8,200",
-    color: "ソニックチタニウム",
+    color: "ブラック（トヨタカラーコード：202）",
+    imageUrl: "https://images.unsplash.com/photo-1503736334956-4c8f8e92946d?auto=format&fit=crop&w=800&h=450&q=80",
     status: "COMPLETED",
     appraisalDate: "2026-06-19",
     overallGrade: "4.5",
@@ -62,22 +64,26 @@ export const DUMMY_VEHICLES: DummyVehicle[] = [
     marketPriceMin: 5_400_000,
     marketPriceMax: 6_200_000,
     damageNotes: [
-      { location: "フロントバンパー",  code: "A1", description: "極細スリキズ（1本）" },
-      { location: "左フロントドア",    code: "A2", description: "細スリキズ×2（10cm以内）" },
+      { location: "フロントバンパー", code: "A1", description: "極細スリキズ（1本・長さ約3cm）" },
+      { location: "左フロントドア",   code: "A2", description: "細スリキズ×2（各10cm以内）" },
     ],
     specialNotes: [
       "ワンオーナー（個人ユーザー・法人所有歴なし）",
-      "ディーラー整備記録簿完備（全整備記録：3回）",
+      "ディーラー整備記録簿完備（全整備記録：3回、最終整備2026年4月）",
       "メーカー保証残3年4ヶ月（2030年3月まで）",
       "禁煙車",
-      "純正19インチアルミホイール装着（ブリヂストン POTENZA S007A 245/40R19 残7分山）",
-      "JBLプレミアムサウンドシステム（12スピーカー）",
-      "パノラミックビューモニター（全周囲カメラ）",
-      "デジタルインナーミラー（前後ドライブレコーダー機能内蔵）",
-      "ヘッドアップディスプレイ（HUD）",
-      "ETC2.0（純正品・セットアップ済み）",
-      "プリクラッシュセーフティ（夜間歩行者・自転車検知機能付）",
-      "レーントレーシングアシスト（LTA）",
+      "フロントグリル・ヘッドライト周りブラックアウト仕様（ガーニッシュ・グリルモール・エンブレムベゼル全ブラック塗装済み）",
+      "フューエルリッドに青色の「AICHI」ロゴデカール貼付（カーボン調 Mサイズ）",
+      "純正19インチアルミホイール装着（ブリヂストン POTENZA S007A 245/40R19 残7分山 製造2024年）",
+      "JBLプレミアムサウンドシステム（12スピーカー・低音増強サブウーファー付き）",
+      "パノラミックビューモニター（全周囲カメラ・クリアランスソナー連動）",
+      "デジタルインナーミラー（前後2カメラ ドライブレコーダー機能内蔵・SDカード32GB付き）",
+      "ヘッドアップディスプレイ（HUD・全情報表示型）",
+      "ETC2.0（純正品・セットアップ済み・DSRC通信対応）",
+      "プリクラッシュセーフティ（夜間歩行者・自転車検知・交差点右折待ち支援付き）",
+      "レーントレーシングアシスト（LTA）・ブラインドスポットモニター（BSM）",
+      "後席リクライニング・シートヒーター前後席標準装備",
+      "電動リアサンシェード（前後ドア全席展開可）",
     ],
   },
   {
@@ -96,6 +102,7 @@ export const DUMMY_VEHICLES: DummyVehicle[] = [
     vehicleWeight: "2,140kg",
     mileage: "15,600",
     color: "ヒートブルーコントラストレイヤリング",
+    imageUrl: "https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?auto=format&fit=crop&w=800&h=450&q=80",
     status: "COMPLETED",
     appraisalDate: "2026-06-17",
     overallGrade: "5",
@@ -132,6 +139,7 @@ export const DUMMY_VEHICLES: DummyVehicle[] = [
     vehicleWeight: "2,560kg",
     mileage: "31,500",
     color: "プレシャスシルバー",
+    imageUrl: "https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?auto=format&fit=crop&w=800&h=450&q=80",
     status: "IN_PROGRESS",
     appraisalDate: "2026-06-19",
     overallGrade: "4",
@@ -170,6 +178,7 @@ export const DUMMY_VEHICLES: DummyVehicle[] = [
     vehicleWeight: "2,050kg",
     mileage: "22,100",
     color: "アーティザンレッドプレミアムメタリック",
+    imageUrl: "https://images.unsplash.com/photo-1552519507-da3b142c6e3d?auto=format&fit=crop&w=800&h=450&q=80",
     status: "PURCHASED",
     appraisalDate: "2026-06-16",
     overallGrade: "R",
@@ -209,6 +218,7 @@ export const DUMMY_VEHICLES: DummyVehicle[] = [
     vehicleWeight: "930kg",
     mileage: "4,100",
     color: "プレミアムクリスタルエナジーグリーン・パール",
+    imageUrl: "https://images.unsplash.com/photo-1541899481282-d53bffe3c35d?auto=format&fit=crop&w=800&h=450&q=80",
     status: "IN_PROGRESS",
     appraisalDate: "2026-06-18",
     overallGrade: "5",
@@ -250,11 +260,12 @@ export const STATUS_COLOR: Record<VehicleStatus, string> = {
   DECLINED:    "bg-gray-100 text-gray-500",
 };
 
+// 外装・内装グレード A/B/C/D — ゴールド / シルバー / 銅 / 深紅
 export const GRADE_COLOR: Record<string, string> = {
-  A: "bg-emerald-100 text-emerald-700 border-emerald-300",
-  B: "bg-blue-100 text-blue-700 border-blue-300",
-  C: "bg-amber-100 text-amber-700 border-amber-300",
-  D: "bg-orange-100 text-orange-700 border-orange-300",
+  A: "bg-amber-50 text-amber-800 border-amber-400",
+  B: "bg-zinc-50 text-zinc-600 border-zinc-400",
+  C: "bg-orange-50 text-orange-700 border-orange-400",
+  D: "bg-rose-50 text-rose-700 border-rose-400",
 };
 
 export const USS_GRADES = ["S", "6", "5", "4.5", "4", "3.5", "3", "2", "1", "R"] as const;
@@ -268,27 +279,29 @@ export const USS_GRADE_LABEL: Record<string, string> = {
   "R": "修復歴", "RA": "修復良",
 };
 
+// USS総合評価バッジ配色
+// S/6/5 → ゴールド（シャンパン）、4.5/4 → シルバー、3.5/3 → カッパー（銅）、2/1 → 深い警告、R/RA → 深紅
 export function getOverallGradeStyle(grade: string): string {
   if (["S", "6", "5"].includes(grade))
-    return "bg-emerald-100 text-emerald-700 border-emerald-300";
+    return "bg-amber-50 text-amber-800 border-amber-400";
   if (["4.5", "4"].includes(grade))
-    return "bg-blue-100 text-blue-700 border-blue-300";
+    return "bg-zinc-50 text-zinc-700 border-zinc-400";
   if (["3.5", "3"].includes(grade))
-    return "bg-amber-100 text-amber-700 border-amber-300";
+    return "bg-orange-50 text-orange-700 border-orange-400";
   if (["2", "1"].includes(grade))
-    return "bg-orange-100 text-orange-700 border-orange-300";
+    return "bg-rose-50 text-rose-700 border-rose-400";
   if (["R", "RA"].includes(grade))
-    return "bg-red-100 text-red-700 border-red-400";
-  return "bg-gray-100 text-gray-700 border-gray-300";
+    return "bg-red-100 text-red-900 border-red-600";
+  return "bg-zinc-50 text-zinc-600 border-zinc-300";
 }
 
 export function getDamageCodeStyle(code: string): string {
-  if (code.startsWith("A")) return "bg-orange-100 text-orange-700 border-orange-300";
-  if (code.startsWith("U")) return "bg-yellow-100 text-yellow-700 border-yellow-300";
-  if (code.startsWith("W")) return "bg-red-100 text-red-700 border-red-300";
-  if (code.startsWith("B")) return "bg-amber-100 text-amber-700 border-amber-300";
-  if (code.startsWith("X")) return "bg-red-100 text-red-700 border-red-400";
-  return "bg-gray-100 text-gray-700 border-gray-300";
+  if (code.startsWith("A")) return "bg-orange-50 text-orange-700 border-orange-400";  // キズ: カッパー
+  if (code.startsWith("U")) return "bg-zinc-50 text-zinc-600 border-zinc-400";        // ヘコミ: シルバー
+  if (code.startsWith("W")) return "bg-rose-50 text-rose-800 border-rose-500";       // 修理跡: 深紅
+  if (code.startsWith("B")) return "bg-amber-50 text-amber-700 border-amber-400";    // サビ: ゴールド系
+  if (code.startsWith("X")) return "bg-red-100 text-red-900 border-red-600";         // ヒビ/割れ: 深紅
+  return "bg-zinc-50 text-zinc-600 border-zinc-300";
 }
 
 export const DAMAGE_CODE_LABEL: Record<string, string> = {
