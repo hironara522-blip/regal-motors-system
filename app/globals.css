@@ -123,8 +123,14 @@
   }
   body {
     @apply bg-background text-foreground;
+    text-rendering: optimizeLegibility;
+    font-feature-settings: "kern" 1, "liga" 1;
   }
   html {
     @apply font-sans;
+  }
+  /* 金額・評価番号など tabular-nums 要素はウェイトが明示されない箇所で薄くならないよう保護 */
+  .tabular-nums {
+    font-variant-numeric: tabular-nums;
   }
 }

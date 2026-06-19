@@ -141,7 +141,7 @@ export default function HomePage() {
                       {v.manufacturer} {v.carName}
                       <span className="text-gray-400 font-normal ml-1.5 text-xs">{v.grade}</span>
                     </p>
-                    <p className="text-xs text-gray-400 mt-0.5">
+                    <p className="text-xs text-gray-400 mt-0.5 font-medium tabular-nums">
                       {v.registrationNumber}　走行 {v.mileage}km
                     </p>
                   </div>

@@ -87,7 +87,7 @@ export default function VehiclesPage() {
                   </TableCell>
 
                   {/* 走行距離 */}
-                  <TableCell className="hidden sm:table-cell text-sm text-gray-700 tabular-nums">
+                  <TableCell className="hidden sm:table-cell text-sm font-medium text-gray-700 tabular-nums">
                     {Number(v.mileage.replace(",", "")).toLocaleString()} km
                   </TableCell>
 
