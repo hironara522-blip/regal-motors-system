@@ -161,22 +161,29 @@ export default function AppraisalFormPage({ params }: Props) {
   return (
     <div className="max-w-3xl space-y-6">
       {/* パンくず */}
-      <div className="flex items-center gap-2 text-sm text-muted-foreground">
-        <Link href="/appraisal" className="hover:text-foreground">査定一覧</Link>
+      <nav className="flex items-center gap-2 text-sm text-gray-400">
+        <Link href="/appraisal" className="hover:text-gray-700 transition-colors">査定一覧</Link>
         <ChevronRight className="h-3.5 w-3.5" />
-        <span className="text-foreground font-medium">
-          {vehicle.manufacturer} {vehicle.carName} 査定フォーム
-        </span>
-      </div>
+        <Link href={`/vehicles/${vehicle.id}`} className="hover:text-gray-700 transition-colors">
+          {vehicle.manufacturer} {vehicle.carName}
+        </Link>
+        <ChevronRight className="h-3.5 w-3.5" />
+        <span className="text-gray-700 font-medium">査定フォーム</span>
+      </nav>
 
-      <div className="flex items-center justify-between">
+      <div className="flex items-start justify-between">
         <div>
-          <h1 className="text-xl font-bold">{vehicle.manufacturer} {vehicle.carName}</h1>
-          <p className="text-sm text-muted-foreground">{vehicle.grade}　{vehicle.registrationNumber}</p>
+          <div className="flex items-center gap-2.5 mb-1">
+            <h1 className="text-xl font-bold text-gray-900">
+              {vehicle.manufacturer} {vehicle.carName}
+            </h1>
+            <span className={cn("text-xs font-medium px-2 py-0.5 rounded-full", STATUS_COLOR[vehicle.status])}>
+              {STATUS_LABEL[vehicle.status]}
+            </span>
+          </div>
+          <p className="text-sm text-gray-500">{vehicle.grade}</p>
+          <p className="text-xs text-gray-400 mt-0.5">{vehicle.registrationNumber}</p>
         </div>
-        <span className={cn("text-xs font-medium px-2 py-0.5 rounded-full", STATUS_COLOR[vehicle.status])}>
-          {STATUS_LABEL[vehicle.status]}
-        </span>
       </div>
 
       {/* 修復歴 */}
@@ -221,7 +228,7 @@ export default function AppraisalFormPage({ params }: Props) {
           {/* 総合評価ボタン */}
           <div>
             <p className="text-xs font-medium mb-1">総合評価</p>
-            <p className="text-[11px] text-muted-foreground mb-2">
+            <p className="text-[11px] text-gray-400 mb-2">
               S=特上　6=優上　5=良上　4.5=良　4=良下　3.5=中上　3=中　2=中下　1=劣　R=修復歴
             </p>
             <div className="flex flex-wrap gap-2">
@@ -303,7 +310,7 @@ export default function AppraisalFormPage({ params }: Props) {
           </div>
         </CardHeader>
         <CardContent className="space-y-2">
-          <p className="text-[11px] text-muted-foreground">
+          <p className="text-[11px] text-gray-400">
             A=キズ（A1小〜A3大）　U=ヘコミ　W=修理跡　B=サビ　X=ヒビ
           </p>
           {damageNotes.length === 0 && (

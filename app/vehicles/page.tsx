@@ -15,32 +15,33 @@ import {
 export default function VehiclesPage() {
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
+
+      {/* ページヘッダー */}
+      <div className="flex items-start justify-between">
         <div>
-          <h1 className="text-2xl font-bold">車両一覧</h1>
-          <p className="text-muted-foreground text-sm mt-1">
-            登録済み {DUMMY_VEHICLES.length}台
-          </p>
+          <h1 className="text-2xl font-bold text-gray-900">車両一覧</h1>
+          <p className="text-sm text-gray-500 mt-1">登録済み {DUMMY_VEHICLES.length}台</p>
         </div>
-        <Link href="/vehicles/new" className={cn(buttonVariants(), "gap-2")}>
+        <Link href="/vehicles/new" className={cn(buttonVariants(), "gap-2 shadow-sm")}>
           <Plus className="h-4 w-4" />
           新規登録
         </Link>
       </div>
 
+      {/* テーブル */}
       <Card>
         <CardContent className="p-0">
           <Table>
             <TableHeader>
-              <TableRow>
-                <TableHead>車両</TableHead>
-                <TableHead>登録番号</TableHead>
-                <TableHead className="hidden md:table-cell">型式</TableHead>
-                <TableHead className="hidden sm:table-cell">走行距離</TableHead>
-                <TableHead>USS評価</TableHead>
-                <TableHead className="hidden sm:table-cell">外装 / 内装</TableHead>
-                <TableHead>ステータス</TableHead>
-                <TableHead className="hidden md:table-cell">査定日</TableHead>
+              <TableRow className="bg-gray-50/80 hover:bg-gray-50/80 border-b border-gray-100">
+                <TableHead className="text-xs font-semibold text-gray-500 uppercase tracking-wide">車両</TableHead>
+                <TableHead className="text-xs font-semibold text-gray-500 uppercase tracking-wide">登録番号</TableHead>
+                <TableHead className="hidden md:table-cell text-xs font-semibold text-gray-500 uppercase tracking-wide">型式</TableHead>
+                <TableHead className="hidden sm:table-cell text-xs font-semibold text-gray-500 uppercase tracking-wide">走行距離</TableHead>
+                <TableHead className="text-xs font-semibold text-gray-500 uppercase tracking-wide">USS評価</TableHead>
+                <TableHead className="hidden sm:table-cell text-xs font-semibold text-gray-500 uppercase tracking-wide">外装 / 内装</TableHead>
+                <TableHead className="text-xs font-semibold text-gray-500 uppercase tracking-wide">ステータス</TableHead>
+                <TableHead className="hidden md:table-cell text-xs font-semibold text-gray-500 uppercase tracking-wide">査定日</TableHead>
                 <TableHead />
               </TableRow>
             </TableHeader>
@@ -49,89 +50,99 @@ export default function VehiclesPage() {
                 <TableRow
                   key={v.id}
                   className={cn(
-                    "hover:bg-muted/40",
-                    v.hasRepairHistory && "bg-red-50/60 hover:bg-red-50"
+                    "border-b border-gray-50 hover:bg-gray-50/60 transition-colors",
+                    v.hasRepairHistory && "bg-red-50/30 hover:bg-red-50/50"
                   )}
                 >
-                  <TableCell>
-                    <div className="flex items-center gap-2">
+                  {/* 車両名 */}
+                  <TableCell className="py-4">
+                    <div className="flex items-center gap-3">
                       <div className={cn(
-                        "w-7 h-7 rounded-full flex items-center justify-center shrink-0",
-                        v.hasRepairHistory ? "bg-red-100" : "bg-muted"
+                        "w-8 h-8 rounded-lg flex items-center justify-center shrink-0",
+                        v.hasRepairHistory ? "bg-red-100" : "bg-gray-100"
                       )}>
                         {v.hasRepairHistory
-                          ? <AlertTriangle className="h-3.5 w-3.5 text-red-500" />
-                          : <Car className="h-3.5 w-3.5 text-muted-foreground" />
-                        }
+                          ? <AlertTriangle className="h-4 w-4 text-red-500" />
+                          : <Car className="h-4 w-4 text-gray-400" />}
                       </div>
                       <div>
-                        <p className="text-sm font-medium leading-tight">
+                        <p className="text-sm font-semibold text-gray-900 leading-tight">
                           {v.manufacturer} {v.carName}
                         </p>
-                        <p className="text-xs text-muted-foreground">{v.grade}</p>
+                        <p className="text-xs text-gray-400 mt-0.5">{v.grade}</p>
                       </div>
                     </div>
                   </TableCell>
-                  <TableCell className="text-sm">{v.registrationNumber}</TableCell>
-                  <TableCell className="hidden md:table-cell text-sm text-muted-foreground">
+
+                  {/* 登録番号 */}
+                  <TableCell className="text-sm font-medium text-gray-700">
+                    {v.registrationNumber}
+                  </TableCell>
+
+                  {/* 型式 */}
+                  <TableCell className="hidden md:table-cell text-xs text-gray-400 font-mono">
                     {v.modelCode}
                   </TableCell>
-                  <TableCell className="hidden sm:table-cell text-sm">
-                    {Number(v.mileage.replace(",", "")).toLocaleString()}km
+
+                  {/* 走行距離 */}
+                  <TableCell className="hidden sm:table-cell text-sm text-gray-700 tabular-nums">
+                    {Number(v.mileage.replace(",", "")).toLocaleString()} km
                   </TableCell>
+
                   {/* USS総合評価 */}
                   <TableCell>
-                    <div className="flex flex-col gap-0.5">
+                    <div className="flex flex-col items-start gap-0.5">
                       <span className={cn(
-                        "text-sm font-bold w-11 text-center px-1.5 py-0.5 rounded border",
+                        "text-sm font-bold px-2.5 py-0.5 rounded border",
                         getOverallGradeStyle(v.overallGrade)
                       )}>
                         {v.overallGrade}
                       </span>
-                      <span className="text-[10px] text-muted-foreground text-center">
+                      <span className="text-[10px] text-gray-400">
                         {USS_GRADE_LABEL[v.overallGrade] ?? ""}
                       </span>
                     </div>
                   </TableCell>
+
                   {/* 外装 / 内装 */}
                   <TableCell className="hidden sm:table-cell">
-                    <div className="flex gap-1">
-                      <span className={cn(
-                        "text-xs font-bold px-1.5 py-0.5 rounded border",
-                        GRADE_COLOR[v.exteriorGrade]
-                      )}>
+                    <div className="flex items-center gap-1.5">
+                      <span className={cn("text-xs font-bold px-1.5 py-0.5 rounded border", GRADE_COLOR[v.exteriorGrade])}>
                         外{v.exteriorGrade}
                       </span>
-                      <span className={cn(
-                        "text-xs font-bold px-1.5 py-0.5 rounded border",
-                        GRADE_COLOR[v.interiorGrade]
-                      )}>
+                      <span className={cn("text-xs font-bold px-1.5 py-0.5 rounded border", GRADE_COLOR[v.interiorGrade])}>
                         内{v.interiorGrade}
                       </span>
                       {v.damageNotes.length > 0 && (
-                        <span className="text-[10px] text-orange-600 font-medium">
-                          キズ{v.damageNotes.length}件
+                        <span className="text-[10px] text-orange-500 font-semibold">
+                          キズ {v.damageNotes.length}件
                         </span>
                       )}
                     </div>
                   </TableCell>
+
+                  {/* ステータス */}
                   <TableCell>
                     <span className={cn(
-                      "text-xs font-medium px-2 py-0.5 rounded-full",
+                      "text-xs font-medium px-2 py-1 rounded-full",
                       STATUS_COLOR[v.status]
                     )}>
                       {STATUS_LABEL[v.status]}
                     </span>
                   </TableCell>
-                  <TableCell className="hidden md:table-cell text-xs text-muted-foreground">
+
+                  {/* 査定日 */}
+                  <TableCell className="hidden md:table-cell text-xs text-gray-400 tabular-nums">
                     {formatDate(v.appraisalDate)}
                   </TableCell>
+
+                  {/* 詳細リンク */}
                   <TableCell>
                     <Link
                       href={`/vehicles/${v.id}`}
-                      className="text-xs text-primary hover:underline"
+                      className="text-xs text-red-600 hover:text-red-700 font-medium"
                     >
-                      詳細
+                      詳細 →
                     </Link>
                   </TableCell>
                 </TableRow>
